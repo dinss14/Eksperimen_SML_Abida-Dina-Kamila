@@ -29,6 +29,13 @@ jobs:
         run: |
           python preprocessing/automate_Abida-Dina-Kamila.py
 
-      - name: Show output file
+      - name: Verify output
         run: |
           ls -lh preprocessing
+          head -n 5 preprocessing/online_shoppers_intention_preprocessing.csv
+
+      - name: Upload preprocessing dataset
+        uses: actions/upload-artifact@v4
+        with:
+          name: online_shoppers_intention_preprocessing
+          path: preprocessing/online_shoppers_intention_preprocessing.csv

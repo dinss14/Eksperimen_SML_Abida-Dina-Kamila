@@ -113,3 +113,5 @@ if __name__ == "__main__":
     )
 
     run_preprocessing(INPUT_PATH, OUTPUT_PATH)
+
+print("CI preprocessing triggered")
