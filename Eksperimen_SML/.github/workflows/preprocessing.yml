@@ -3,8 +3,8 @@ name: Automated Data Preprocessing
 on:
   push:
     paths:
-      - "online_shoppers_intention_raw.csv"
-      - "preprocessing/automate_Abida-Dina-Kamila.py"
+      - "Eksperimen_SML/online_shoppers_intention_raw.csv"
+      - "Eksperimen_SML/preprocessing/automate_Abida-Dina-Kamila.py"
   workflow_dispatch:
 
 jobs:
@@ -27,12 +27,12 @@ jobs:
 
       - name: Run preprocessing automation
         run: |
-          python preprocessing/automate_Abida-Dina-Kamila.py
+          python Eksperimen_SML/preprocessing/automate_Abida-Dina-Kamila.py
 
       - name: Verify output
         run: |
-          ls -lh preprocessing
-          head -n 5 preprocessing/online_shoppers_intention_preprocessing.csv
+          ls -lh Eksperimen_SML/preprocessing
+          head -n 5 Eksperimen_SML/preprocessing/online_shoppers_intention_preprocessing.csv
 
       - name: Upload preprocessing dataset
         uses: actions/upload-artifact@v4
