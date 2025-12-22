@@ -14,19 +14,15 @@ def run_preprocessing(
     random_state: int = 42
 ):
 
-    # 1. Load Dataset
     df = pd.read_csv(input_path)
 
-    # 2. Copy & Konversi Tipe Data
     df_prep = df.copy()
     df_prep["Weekend"] = df_prep["Weekend"].astype(int)
     df_prep["Revenue"] = df_prep["Revenue"].astype(int)
 
-    # 3. Pisahkan Feature & Target
     X = df_prep.drop(columns=["Revenue"])
     y = df_prep["Revenue"]
 
-    # 4. Definisikan Kolom
     categorical_cols = [
         "Month",
         "VisitorType"
@@ -53,7 +49,6 @@ def run_preprocessing(
         "TrafficType"
     ]
 
-    # 5. Train-Test Split
     X_train, X_test, y_train, y_test = train_test_split(
         X,
         y,
@@ -62,7 +57,6 @@ def run_preprocessing(
         random_state=random_state
     )
 
-    # 6. Preprocessing Pipeline
     preprocessor = ColumnTransformer(
         transformers=[
             ("num", StandardScaler(), numerical_cols),
@@ -71,13 +65,11 @@ def run_preprocessing(
         ]
     )
 
-    # 7. Fit & Transform
     X_train_processed = preprocessor.fit_transform(X_train)
     X_test_processed = preprocessor.transform(X_test)
 
     feature_names = preprocessor.get_feature_names_out()
 
-    # 8. Build Final DataFrame
     X_train_df = pd.DataFrame(X_train_processed, columns=feature_names)
     X_train_df["Revenue"] = y_train.values
     X_train_df["dataset_split"] = "train"
@@ -88,7 +80,6 @@ def run_preprocessing(
 
     final_df = pd.concat([X_train_df, X_test_df], axis=0)
 
-    # 9. Save Output
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     final_df.to_csv(output_path, index=False)
 
@@ -97,7 +88,6 @@ def run_preprocessing(
     print("Shape akhir:", final_df.shape)
 
 
-# ENTRY POINT
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
