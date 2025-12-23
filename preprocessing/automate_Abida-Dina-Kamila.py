@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-import numpy as np
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -9,29 +8,22 @@ from sklearn.compose import ColumnTransformer
 
 def run_preprocessing(
     input_path: str,
-    output_path: str,
+    output_dir: str,
     test_size: float = 0.2,
     random_state: int = 42
 ):
 
     df = pd.read_csv(input_path)
 
-    df_prep = df.copy()
-    df_prep["Weekend"] = df_prep["Weekend"].astype(int)
-    df_prep["Revenue"] = df_prep["Revenue"].astype(int)
+    df = df.copy()
+    df["Weekend"] = df["Weekend"].astype(int)
+    df["Revenue"] = df["Revenue"].astype(int)
 
-    X = df_prep.drop(columns=["Revenue"])
-    y = df_prep["Revenue"]
+    X = df.drop(columns=["Revenue"])
+    y = df["Revenue"]
 
-    categorical_cols = [
-        "Month",
-        "VisitorType"
-    ]
-
-    boolean_cols = [
-        "Weekend"
-    ]
-
+    categorical_cols = ["Month", "VisitorType"]
+    boolean_cols = ["Weekend"]
     numerical_cols = [
         "Administrative",
         "Administrative_Duration",
@@ -46,16 +38,18 @@ def run_preprocessing(
         "OperatingSystems",
         "Browser",
         "Region",
-        "TrafficType"
+        "TrafficType",
     ]
+
 
     X_train, X_test, y_train, y_test = train_test_split(
         X,
         y,
         test_size=test_size,
         stratify=y,
-        random_state=random_state
+        random_state=random_state,
     )
+
 
     preprocessor = ColumnTransformer(
         transformers=[
@@ -70,22 +64,32 @@ def run_preprocessing(
 
     feature_names = preprocessor.get_feature_names_out()
 
+
     X_train_df = pd.DataFrame(X_train_processed, columns=feature_names)
     X_train_df["Revenue"] = y_train.values
-    X_train_df["dataset_split"] = "train"
 
     X_test_df = pd.DataFrame(X_test_processed, columns=feature_names)
     X_test_df["Revenue"] = y_test.values
-    X_test_df["dataset_split"] = "test"
 
-    final_df = pd.concat([X_train_df, X_test_df], axis=0)
 
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    final_df.to_csv(output_path, index=False)
+    os.makedirs(output_dir, exist_ok=True)
 
-    print("Preprocessing selesai.")
-    print(f"Output disimpan di: {output_path}")
-    print("Shape akhir:", final_df.shape)
+    train_path = os.path.join(
+        output_dir,
+        "online_shoppers_train_preprocessed.csv"
+    )
+    test_path = os.path.join(
+        output_dir,
+        "online_shoppers_test_preprocessed.csv"
+    )
+
+    X_train_df.to_csv(train_path, index=False)
+    X_test_df.to_csv(test_path, index=False)
+
+    print("Preprocessing selesai")
+    print("Output directory:", output_dir)
+    print("Train shape:", X_train_df.shape)
+    print("Test shape:", X_test_df.shape)
 
 
 if __name__ == "__main__":
@@ -96,12 +100,12 @@ if __name__ == "__main__":
         "online_shoppers_intention_raw.csv"
     )
 
-    OUTPUT_PATH = os.path.join(
+    OUTPUT_DIR = os.path.join(
         BASE_DIR,
         "preprocessing",
-        "online_shoppers_intention_preprocessing.csv"
+        "online_shoppers_intention_preprocessing"
     )
 
-    run_preprocessing(INPUT_PATH, OUTPUT_PATH)
+    run_preprocessing(INPUT_PATH, OUTPUT_DIR)
 
-print("CI preprocessing triggered")
+    print("CI preprocessing triggered")
