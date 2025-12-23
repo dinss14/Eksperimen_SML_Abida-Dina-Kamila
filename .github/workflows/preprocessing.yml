@@ -5,6 +5,7 @@ on:
     paths:
       - "online_shoppers_intention_raw.csv"
       - "preprocessing/automate_Abida-Dina-Kamila.py"
+      - ".github/workflows/preprocessing.yml"
   workflow_dispatch:
 
 jobs:
@@ -31,11 +32,15 @@ jobs:
 
       - name: Verify output
         run: |
-          ls -lh preprocessing
-          head -n 5 preprocessing/online_shoppers_intention_preprocessing.csv
+          echo "Checking preprocessing output directory"
+          ls -lh preprocessing/online_shoppers_intention_preprocessing
+          echo "Preview train data"
+          head -n 5 preprocessing/online_shoppers_intention_preprocessing/online_shoppers_train_preprocessed.csv
+          echo "Preview test data"
+          head -n 5 preprocessing/online_shoppers_intention_preprocessing/online_shoppers_test_preprocessed.csv
 
       - name: Upload preprocessing dataset
         uses: actions/upload-artifact@v4
         with:
           name: online_shoppers_intention_preprocessing
-          path: preprocessing/online_shoppers_intention_preprocessing.csv
+          path: preprocessing/online_shoppers_intention_preprocessing/
